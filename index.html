@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>T. R. Harikrishnan — Engineering Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080c14;
+      --surface: #0d1420;
+      --surface2: #111a2a;
+      --border: rgba(96, 165, 250, 0.12);
+      --blue: #60a5fa;
+      --blue-dim: #3b82f6;
+      --cyan: #22d3ee;
+      --white: #f1f5ff;
+      --muted: #8095b0;
+      --accent: #f0abfc;
+      --green: #34d399;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.6;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      background: rgba(8,12,20,0.8);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--blue); }
+
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--blue); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(96,165,250,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(96,165,250,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
+    }
+
+    .hero-glow {
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(59,130,246,0.15) 0%, transparent 70%);
+      top: 10%; right: -100px;
+      pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%);
+      bottom: 20%; left: -50px;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--cyan);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+    .hero-name .line2 { color: var(--blue); }
+
+    .hero-sub {
+      max-width: 560px;
+      font-size: 1.1rem;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-bottom: 3.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.7s forwards;
+    }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.35rem 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 2rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      transition: all 0.2s;
+    }
+    .tag:hover { border-color: var(--blue); color: var(--blue); }
+    .tag.highlight { border-color: rgba(34,211,238,0.3); color: var(--cyan); }
+
+    .hero-cta {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.9s forwards;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.85rem 2rem;
+      border-radius: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--blue-dim);
+      color: white;
+      border: 1px solid transparent;
+    }
+    .btn-primary:hover { background: var(--blue); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
+
+    .hero-stats {
+      position: absolute;
+      right: 4rem; bottom: 3rem;
+      display: flex; gap: 3rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1s forwards;
+    }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1;
+    }
+    .stat-num span { color: var(--blue); }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 7rem 4rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 3.5rem;
+      line-height: 1.1;
+    }
+
+    /* ── ABOUT ── */
+    #about .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--muted);
+      font-size: 1.02rem;
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+    }
+    .about-text p strong { color: var(--white); font-weight: 500; }
+
+    .about-certs {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .cert-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.2rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      transition: border-color 0.2s;
+    }
+    .cert-card:hover { border-color: var(--blue); }
+    .cert-icon {
+      width: 42px; height: 42px;
+      border-radius: 0.5rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .cert-icon.aws { background: rgba(255,153,0,0.15); }
+    .cert-icon.scrum { background: rgba(96,165,250,0.12); }
+    .cert-icon.ai { background: rgba(34,211,238,0.12); }
+    .cert-title { font-size: 0.92rem; font-weight: 500; color: var(--white); }
+    .cert-sub { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; }
+
+    /* ── EXPERIENCE ── */
+    #experience { padding-top: 2rem; }
+    .exp-timeline {
+      position: relative;
+      padding-left: 2rem;
+    }
+    .exp-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--blue), transparent);
+    }
+    .exp-item {
+      position: relative;
+      margin-bottom: 3rem;
+      padding-left: 2rem;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s;
+    }
+    .exp-item.visible { opacity: 1; transform: translateX(0); }
+    .exp-dot {
+      position: absolute;
+      left: -2.4rem;
+      top: 0.4rem;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 0 12px var(--blue);
+    }
+    .exp-period {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--cyan);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.4rem;
+    }
+    .exp-role {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+    .exp-company {
+      font-size: 0.9rem;
+      color: var(--blue);
+      font-weight: 500;
+      margin-bottom: 0.8rem;
+    }
+    .exp-desc {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .exp-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.8rem; }
+    .exp-tag {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      padding: 0.2rem 0.6rem;
+      background: rgba(96,165,250,0.08);
+      border: 1px solid rgba(96,165,250,0.2);
+      border-radius: 0.25rem;
+      color: var(--blue);
+      letter-spacing: 0.03em;
+    }
+
+    /* ── SKILLS ── */
+    #skills .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.8rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(96,165,250,0.05) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .skill-card:hover { border-color: rgba(96,165,250,0.35); transform: translateY(-4px); }
+    .skill-card:hover::before { opacity: 1; }
+    .skill-card-icon { font-size: 1.6rem; margin-bottom: 1rem; }
+    .skill-card-title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--white);
+    }
+    .skill-pills { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .skill-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 0.25rem;
+      letter-spacing: 0.02em;
+    }
+    .pill-blue { background: rgba(96,165,250,0.1); color: var(--blue); }
+    .pill-cyan { background: rgba(34,211,238,0.1); color: var(--cyan); }
+    .pill-purple { background: rgba(240,171,252,0.1); color: var(--accent); }
+    .pill-green { background: rgba(52,211,153,0.1); color: var(--green); }
+
+    /* ── PROJECTS ── */
+    #projects .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue), var(--cyan));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .project-card:hover { border-color: rgba(96,165,250,0.3); transform: translateY(-4px); }
+    .project-card:hover::after { transform: scaleX(1); }
+    .project-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem; }
+    .project-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .project-meta {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.5;
+    }
+    .project-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.2rem;
+    }
+    .project-stack { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .stack-item {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 0.2rem;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      text-align: center;
+      padding-bottom: 6rem;
+    }
+    #contact .section-title { margin-bottom: 1rem; }
+    .contact-sub {
+      color: var(--muted);
+      margin-bottom: 3rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .contact-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .contact-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.8rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      text-decoration: none;
+      color: var(--muted);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .contact-link:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: #1e3050; border-radius: 3px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      #hero { padding: 7rem 1.5rem 3rem; }
+      .hero-stats { position: static; display: flex; gap: 2rem; margin-top: 3rem; }
+      section { padding: 4rem 1.5rem; }
+      #about .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">TR<span>.</span>H</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero" style="max-width:100%; padding-top:8rem;">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+
+  <div class="hero-eyebrow">// Engineering Manager · Chennai, India</div>
+
+  <h1 class="hero-name">
+    Harikrishnan<br>
+    <span class="line2">T. R.</span>
+  </h1>
+
+  <p class="hero-sub">
+    13+ years building enterprise software and cloud-native platforms. Currently leading engineering at <strong>Optum</strong> — shipping healthcare tech at scale with Java, React, and AI-assisted delivery.
+  </p>
+
+  <div class="hero-tags">
+    <span class="tag highlight">AI-Augmented Dev</span>
+    <span class="tag">Full-Stack Java/React</span>
+    <span class="tag">Cloud (AWS · Azure)</span>
+    <span class="tag">Engineering Management</span>
+    <span class="tag">Microservices</span>
+    <span class="tag">LLM Prompt Engineering</span>
+  </div>
+
+  <div class="hero-cta">
+    <a href="#experience" class="btn btn-primary">View Experience</a>
+    <a href="#contact" class="btn btn-outline">Get in Touch</a>
+  </div>
+
+  <div class="hero-stats">
+    <div>
+      <div class="stat-num">13<span>+</span></div>
+      <div class="stat-label">Years in IT</div>
+    </div>
+    <div>
+      <div class="stat-num">6<span>+</span></div>
+      <div class="stat-label">Companies</div>
+    </div>
+    <div>
+      <div class="stat-num">10<span>+</span></div>
+      <div class="stat-label">Team Size Led</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-label">// 01 · About</div>
+  <h2 class="section-title">Shipping software that matters</h2>
+
+  <div class="about-grid">
+    <div class="about-text">
+      <p>I'm a <strong>Software Engineering Manager</strong> with a full-stack background — from wiring up React UIs to designing cloud infrastructure on AWS and Azure. I started as a developer at iNautix/BNY Mellon, grew through senior engineering roles, and now lead a team at <strong>Optum</strong> delivering healthcare platforms used across the US.</p>
+      <p>My current focus is on <strong>AI-augmented engineering</strong> — integrating Copilot, LLM tooling, and prompt engineering into the daily workflow to make my team ship faster without sacrificing quality.</p>
+      <p>Outside of work, I write poetry and sing. I believe the discipline of creative work makes you a sharper engineer.</p>
+    </div>
+
+    <div class="about-certs">
+      <div class="cert-card">
+        <div class="cert-icon aws">☁️</div>
+        <div>
+          <div class="cert-title">AWS Certified Solutions Architect</div>
+          <div class="cert-sub">Associate · Amazon Web Services</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon scrum">🔁</div>
+        <div>
+          <div class="cert-title">Certified ScrumMaster (CSM)</div>
+          <div class="cert-sub">Agile · Scrum Alliance</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon ai">🤖</div>
+        <div>
+          <div class="cert-title">AI/ML Enablement Program</div>
+          <div class="cert-sub">Internal Certification · Optum</div>
+        </div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-icon" style="background:rgba(52,211,153,0.12);">🎓</div>
+        <div>
+          <div class="cert-title">B.E. Electrical & Electronics</div>
+          <div class="cert-sub">RMD Engineering College · 2013 · CGPA 8.59</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label">// 02 · Experience</div>
+  <h2 class="section-title">Where I've built things</h2>
+
+  <div class="exp-timeline">
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Jul 2023 – Present · 3 Years</div>
+      <div class="exp-role">Manager, Software Engineering</div>
+      <div class="exp-company">Optum</div>
+      <div class="exp-desc">Leading a team of 10 engineers on HCEP — a reusable Healthcare Engagement Platform consumed across Optum products. Driving architecture reviews, AI-assisted code review workflows (cutting cycle time ~30%), and mentoring the team on prompt engineering and Copilot integration.</div>
+      <div class="exp-tags">
+        <span class="exp-tag">React</span><span class="exp-tag">Spring Boot</span><span class="exp-tag">AKS</span><span class="exp-tag">Docker</span><span class="exp-tag">Jenkins</span><span class="exp-tag">GitHub Copilot</span><span class="exp-tag">Team Leadership</span>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Jan 2022 – Jun 2023 · 1 yr 6 mo</div>
+      <div class="exp-role">Lead Software Engineer</div>
+      <div class="exp-company">Optum</div>
+      <div class="exp-desc">Full-stack lead on OMMS, a Medicaid management platform. Built Azure infrastructure with Terraform, integrated Databricks pipelines, and piloted AI-assisted documentation generation that reduced onboarding time by ~40%.</div>
+      <div class="exp-tags">
+        <span class="exp-tag">Java</span><span class="exp-tag">Angular</span><span class="exp-tag">Azure</span><span class="exp-tag">Terraform</span><span class="exp-tag">Databricks</span><span class="exp-tag">Scala</span><span class="exp-tag">MongoDB</span>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Aug 2020 – Dec 2021 · 1 yr 5 mo</div>
+      <div class="exp-role">Senior Software Engineer</div>
+      <div class="exp-company">OptumInsight</div>
+      <div class="exp-desc">Designed and deployed a cloud ticketing app on AWS. Acted as Solutions Architect — isolated virus scanning as a containerized ECS microservice, automated infra provisioning with CloudFormation.</div>
+      <div class="exp-tags">
+        <span class="exp-tag">AWS EC2</span><span class="exp-tag">ECS</span><span class="exp-tag">Lambda</span><span class="exp-tag">CloudFormation</span><span class="exp-tag">Docker</span>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Mar 2019 – Aug 2020 · 1 yr 5 mo</div>
+      <div class="exp-role">Senior Software Engineer</div>
+      <div class="exp-company">Object Frontier Solutions</div>
+      <div class="exp-desc">Full-stack enterprise development across Java backend and modern UI layers. Contributed to design and delivery of scalable web applications.</div>
+      <div class="exp-tags">
+        <span class="exp-tag">Java</span><span class="exp-tag">Spring</span><span class="exp-tag">React</span><span class="exp-tag">REST APIs</span>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">May 2016 – Mar 2019 · 2 yrs 11 mo</div>
+      <div class="exp-role">Senior Application Developer</div>
+      <div class="exp-company">Scope International (Standard Chartered)</div>
+      <div class="exp-desc">Delivered the Client Pricing system from POC to production — end-to-end. Designed core architecture for both UI (Ember JS) and backend, led a sub-team during a critical sprint.</div>
+      <div class="exp-tags">
+        <span class="exp-tag">Ember JS</span><span class="exp-tag">Java</span><span class="exp-tag">Spring</span><span class="exp-tag">Hibernate</span><span class="exp-tag">Oracle 11g</span>
+      </div>
+    </div>
+
+    <div class="exp-item">
+      <div class="exp-dot"></div>
+      <div class="exp-period">Dec 2012 – May 2016 · 3 yrs 6 mo</div>
+      <div class="exp-role">Developer → Senior Developer</div>
+      <div class="exp-company">iNautix Technologies (BNY Mellon)</div>
+      <div class="exp-desc">Core contributor to the BDC Clearance & Settlement system for Federal Depository transactions. Built Flex UI modules, owned migration of BO reports to Jasper Reports.</div>
+      <div class="exp-tags">
+        <span class="exp-tag">Java</span><span class="exp-tag">Spring</span><span class="exp-tag">Hibernate</span><span class="exp-tag">Active MQ</span><span class="exp-tag">Oracle</span><span class="exp-tag">Jasper Reports</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label">// 03 · Skills</div>
+  <h2 class="section-title">What I work with</h2>
+
+  <div class="skills-grid">
+    <div class="skill-card">
+      <div class="skill-card-icon">🤖</div>
+      <div class="skill-card-title">AI & Modern Tooling</div>
+      <div class="skill-pills">
+        <span class="skill-pill pill-cyan">GitHub Copilot</span>
+        <span class="skill-pill pill-cyan">LLM Prompt Engineering</span>
+        <span class="skill-pill pill-cyan">AI Code Review</span>
+        <span class="skill-pill pill-cyan">RAG Prototyping</span>
+        <span class="skill-pill pill-cyan">AI Test Generation</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-icon">⚙️</div>
+      <div class="skill-card-title">Backend & Languages</div>
+      <div class="skill-pills">
+        <span class="skill-pill pill-blue">Java</span>
+        <span class="skill-pill pill-blue">Spring Boot</span>
+        <span class="skill-pill pill-blue">Hibernate ORM</span>
+        <span class="skill-pill pill-blue">REST APIs</span>
+        <span class="skill-pill pill-blue">Scala</span>
+        <span class="skill-pill pill-blue">SQL</span>
+        <span class="skill-pill pill-blue">Shell</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-icon">🎨</div>
+      <div class="skill-card-title">Frontend</div>
+      <div class="skill-pills">
+        <span class="skill-pill pill-purple">React</span>
+        <span class="skill-pill pill-purple">Angular</span>
+        <span class="skill-pill pill-purple">Ember JS</span>
+        <span class="skill-pill pill-purple">JavaScript</span>
+        <span class="skill-pill pill-purple">TypeScript</span>
+        <span class="skill-pill pill-purple">jQuery</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-icon">☁️</div>
+      <div class="skill-card-title">Cloud & DevOps</div>
+      <div class="skill-pills">
+        <span class="skill-pill pill-green">AWS</span>
+        <span class="skill-pill pill-green">Azure</span>
+        <span class="skill-pill pill-green">Docker</span>
+        <span class="skill-pill pill-green">AKS</span>
+        <span class="skill-pill pill-green">Terraform</span>
+        <span class="skill-pill pill-green">Jenkins</span>
+        <span class="skill-pill pill-green">CloudFormation</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-icon">🗄️</div>
+      <div class="skill-card-title">Data & Databases</div>
+      <div class="skill-pills">
+        <span class="skill-pill pill-blue">MySQL</span>
+        <span class="skill-pill pill-blue">Oracle</span>
+        <span class="skill-pill pill-blue">MongoDB</span>
+        <span class="skill-pill pill-blue">Databricks</span>
+        <span class="skill-pill pill-blue">Azure Data Factory</span>
+      </div>
+    </div>
+
+    <div class="skill-card">
+      <div class="skill-card-icon">👥</div>
+      <div class="skill-card-title">Leadership & Process</div>
+      <div class="skill-pills">
+        <span class="skill-pill pill-purple">Engineering Management</span>
+        <span class="skill-pill pill-purple">Agile / Scrum</span>
+        <span class="skill-pill pill-purple">System Design</span>
+        <span class="skill-pill pill-purple">Mentoring</span>
+        <span class="skill-pill pill-purple">Architecture Reviews</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-label">// 04 · Projects</div>
+  <h2 class="section-title">Things I've shipped</h2>
+
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">HCEP</div>
+        <div class="project-meta">Team: 10<br>4 years+</div>
+      </div>
+      <div class="project-desc">Healthcare Engagement Platform — a reusable internal platform consumed by multiple Optum products. Designed for extensibility and zero-downtime deploys. Integrated AI-powered test generation to improve regression coverage.</div>
+      <div class="project-stack">
+        <span class="stack-item">React</span><span class="stack-item">Java</span><span class="stack-item">Spring Boot</span><span class="stack-item">MySQL</span><span class="stack-item">Docker</span><span class="stack-item">AKS</span><span class="stack-item">Jenkins</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">OMMS</div>
+        <div class="project-meta">Team: 10<br>1 year</div>
+      </div>
+      <div class="project-desc">Medicaid Management System supporting US state government insurance plans. Two modules: Provider Enrollment Portal (Angular + Java + MongoDB) and Member Portal (file processing with Oracle as delta lake). Built full Azure infra with Terraform.</div>
+      <div class="project-stack">
+        <span class="stack-item">Angular</span><span class="stack-item">Java</span><span class="stack-item">MongoDB</span><span class="stack-item">Oracle</span><span class="stack-item">Azure</span><span class="stack-item">Terraform</span><span class="stack-item">Scala</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">Engage</div>
+        <div class="project-meta">Team: 6<br>10 months</div>
+      </div>
+      <div class="project-desc">Cloud-native ticketing application on AWS. Virus scanning extracted as an independent Docker microservice on ECS. Full DevOps pipeline via CodeDeploy. Acted as Solutions Architect for cost and resiliency.</div>
+      <div class="project-stack">
+        <span class="stack-item">AWS EC2</span><span class="stack-item">ECS</span><span class="stack-item">Lambda</span><span class="stack-item">Docker</span><span class="stack-item">CloudFormation</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">Client Pricing</div>
+        <div class="project-meta">Team: 2–10<br>2 yrs 9 mo</div>
+      </div>
+      <div class="project-desc">Deal management system for Standard Chartered — built from POC to production. Designed core architecture for both UI and backend. Introduced Ember JS to the team and mentored through growth.</div>
+      <div class="project-stack">
+        <span class="stack-item">Ember JS</span><span class="stack-item">Java</span><span class="stack-item">Spring</span><span class="stack-item">Hibernate</span><span class="stack-item">Oracle 11g</span><span class="stack-item">Tomcat</span>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <div class="project-name">BDC</div>
+        <div class="project-meta">Team: 13<br>2 yrs 9 mo</div>
+      </div>
+      <div class="project-desc">Broker Dealer Clearance & Settlement system for BNY Mellon — handling Federal Depository clearing internally and externally. Contributed to Flex UI, core clearance module, and Jasper Reports migration.</div>
+      <div class="project-stack">
+        <span class="stack-item">Java</span><span class="stack-item">Spring</span><span class="stack-item">Hibernate</span><span class="stack-item">Active MQ</span><span class="stack-item">Oracle</span><span class="stack-item">Jasper</span><span class="stack-item">Unix</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-label">// 05 · Contact</div>
+  <h2 class="section-title">Let's connect</h2>
+  <p class="contact-sub">Open to conversations about engineering leadership, cloud architecture, or AI in software delivery.</p>
+  <div class="contact-links">
+    <a href="mailto:t.r.harikrish@gmail.com" class="contact-link">
+      <span>✉</span> t.r.harikrish@gmail.com
+    </a>
+    <a href="tel:+919677296312" class="contact-link">
+      <span>📱</span> +91-9677296312
+    </a>
+    <a href="https://linkedin.com" class="contact-link" target="_blank">
+      <span>in</span> LinkedIn
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>T. R. Harikrishnan · Chennai, India</span>
+  <span>Engineering Manager · Full-Stack · Cloud · AI</span>
+</footer>
+
+<script>
+  // Scroll-triggered animations
+  const items = document.querySelectorAll('.exp-item');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+      }
+    });
+  }, { threshold: 0.1 });
+  items.forEach(el => observer.observe(el));
+
+  // Smooth active nav highlight
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 200) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--blue)' : '';
+    });
+  });
+</script>
+</body>
+</html>
